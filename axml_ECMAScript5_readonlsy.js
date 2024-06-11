@@ -146,7 +146,7 @@ function parse_attribute(array, offset, string_pool) {
         namespace: le32_get(array, offset),
         name: le32_get(array, offset + 4),
         value: le32_get(array, offset + 8),
-        type: type2str(le32_get(array, offset + 12)),
+        type: le32_get(array, offset + 12),
         resource_id: le32_get(array, offset + 16)
     };
 
@@ -154,10 +154,15 @@ function parse_attribute(array, offset, string_pool) {
 
     if (result.type === 0x03000008) { // type string
         result.value_string = get_string_from_pool(string_pool, result.value);
+    } else if (result.type === 0x12000008) { // type boolean
+        result.value_string = result.value === 0 ? 'false' : 'true';
     }
+
+    result.type_string = type2str(result.type); // Added to keep the type as string for other usages
 
     return result;
 }
+
 
 function parse_attributes(tag, array, offset, string_pool) {
     for (let i = 0; i < tag.attributes_count; i++) {
