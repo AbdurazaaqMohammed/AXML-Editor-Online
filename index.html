@@ -175,7 +175,7 @@ function formatXML(xml) {
 	async function recompile() {
 		document.getElementById('log').innerHTML += "Compiling..<br>";
 		cheerpOSAddStringFile(input, document.getElementById("myInput").value);
-		await cheerpjRunJar("/app/xml2axml-2.0.1.jar", ['e'], [input], [output]);
+		await cheerpjRunJar("/app/aXML.jar", ['e'], [input], [output]);
 		const blob = await cjFileBlob(output);
 		const dl = document.getElementById("downloadLink");
 		dl.href = window.URL.createObjectURL(blob);
