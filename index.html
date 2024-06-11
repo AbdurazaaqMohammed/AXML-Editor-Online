@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
-	<title>CheerpJ test</title>
+	<title>Edit AXML</title>
 	<script src="https://cjrtnc.leaningtech.com/3.0/cj3loader.js"></script>
 	<style>
 		@font-face {
@@ -28,7 +28,7 @@
 			font-size: 12px;
 			padding: 10px 0;
 			text-align: center;
-						height: 7.5%;
+			height: 7.5%;
 			width: 100%;
 		}
 
@@ -41,7 +41,6 @@
 			margin-top: 50px;
 		}
 
-
 		#myInput {
 			font-family: 'MyCustomFont', 'Poppins', sans-serif;
 			padding: 10px;
@@ -49,28 +48,42 @@
 			border: 2px solid #ccc;
 			border-radius: 8px;
 			box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-			width: 300px;
-			height: 50%px;
+			width: 80%; /* Adjusted width */
+			height: 300px; /* Adjusted height */
 			margin-bottom: 20px;
+			resize: none; /* Prevent resizing */
 		}
 
-		#recompile_button {
+		.button-container {
+			display: flex;
+			justify-content: flex-end; /* Align buttons to the right */
+			width: 80%; /* Same width as text area */
+		}
+#recompile_button {
+		font-family: 'MyCustomFont', 'Poppins', sans-serif;
+		padding: 10px 20px;
+		font-size: 1em;
+		background-color: #4caf50;
+		color: white;
+		border: none;
+		border-radius: 5px;
+		cursor: pointer;
+		margin-bottom: 10px;
+	}
+		.button-container button {
 			font-family: 'MyCustomFont', 'Poppins', sans-serif;
 			padding: 10px 20px;
 			font-size: 1em;
-			background-color: #4caf50;
-			color: white;
-			border: none;
-			border-radius: 5px;
+			margin-left: 10px; /* Add some space between buttons */
 			cursor: pointer;
-			margin-bottom: 10px;
 		}
 
-		#recompile_button:hover {
+		.button-container button:hover {
 			background-color: #45a049;
 		}
 
-		#downloadLink, #file_input {
+		#downloadLink,
+		#file_input {
 			visibility: hidden;
 		}
 	</style>
@@ -85,18 +98,18 @@
 </div>
 <p id="fileName"> </p>
 <textarea id="myInput" placeholder="Converted XML will appear here"></textarea>
-<button id="recompile_button" onclick="recompile()">Compile</button>
+<div class="button-container">
+	<button id="recompile_button" onclick="recompile()">Compile</button>
+	<button onclick="recompile()">Test</button>
+</div>
 
 <p id="log"> </p>
 
 <a id="downloadLink" href="#" download>Download File</a>
 <input type="file" id="file_input" accept=".xml" onchange="handleFiles(this.files)">
 
-<script src="axml_ECMAScript5_readonlsy.js"></script>
-<script src="LEORChn.baseLib.js"></script>
-<script src="android.R.attr.js"></script>
 <script>
-//or APK, split APKS are supported
+	//or APK, split APKS are supported
 	function dragOverHandler(event) {
 		event.preventDefault();
 		event.dataTransfer.dropEffect = 'copy';
@@ -113,80 +126,102 @@
 		handleFile(file);
 	}
 
-
-
 	async function handleFile(file) {
-				document.getElementById("fileName").textContent = file.name;
+		const filename = file.name;
+		document.getElementById("fileName").textContent = file.name;
+		console.log(file.type);
 		if (file.type === 'text/xml') {
 			document.getElementById('log').innerHTML += "Reading file..<br>";
 			var reader = new FileReader();
 			reader.onload = function (event) {
 				var arrayBuffer = event.target.result;
 				var uint8Array = new Uint8Array(arrayBuffer);
-				document.getElementById("myInput").value = transformXML(parse_to_xml(uint8Array));
+				cheerpOSAddStringFile("/str/fileName.xml", uint8Array);
+				decompile();
+				//document.getElementById("myInput").value = transformXML(parse_to_xml(uint8Array));
 			};
 			reader.readAsArrayBuffer(file);
-		} /*else if (file.type.startsWith('app') {
-					
-				} */else {
+		} else {
+			var script = document.createElement('script');
+			script.src = 'https://cdn.bootcdn.net/ajax/libs/jszip/3.3.0/jszip.min.js';
+			
+			script.onload = function() {
+				JSZip.loadAsync(file).then(function(z){
+					if(z.file('AndroidManifest.xml')) {
+						z.file('AndroidManifest.xml').async('uint8array').then(function(b){
+							cheerpOSAddStringFile("/str/fileName.xml", b);
+							decompile();
+						});
+					} else {
+						if (z.file('base.apk')) {
+							z.file('base.apk').async('uint8array').then(function(baseApkContent) {
+								var innerZip = new JSZip();
+								innerZip.loadAsync(baseApkContent).then(function(innerZip) {
+									innerZip.file('AndroidManifest.xml').async('uint8array').then(function(androidManifestContent) {
+										cheerpOSAddStringFile("/str/fileName.xml", androidManifestContent);
+										decompile();
+									});
+								});
+							});
+						} else {
+							var apkFile = null;
+							z.forEach(function(relativePath, zipEntry) {
+								if (zipEntry.name.endsWith(".apk") && !zipEntry.name.startsWith("config")) {
+									apkFile = zipEntry;
+								}
+							});
+							if (apkFile) {
+								apkFile.async('uint8array').then(function(apkContent) {
+									var innerZip = new JSZip();
+									innerZip.loadAsync(apkContent).then(function(innerZip) {
+										innerZip.file('AndroidManifest.xml').async('uint8array').then(function(androidManifestContent) {
+											cheerpOSAddStringFile("/str/fileName.xml", androidManifestContent);
+											decompile();
+										});
+									});
+								});
+							} else {
+								alert('No valid APK file found.');
+							}
+						}
+					}
+				});
+			};
+
+			document.body.appendChild(script);
+			
+		}
+		/*else {
 			alert('Please select a valid XML file.');
+		}*/
+	}
+
+	async function decompile() {
+		const log = document.getElementById('log');
+		log.innerHTML += "Decompiling..<br>";
+		await cheerpjRunJar("/app/aXML.jar", ['d'], ["/str/fileName.xml"], ["/files/test.xml"]);
+		const blob = await cjFileBlob("/files/test.xml");
+		const text = await blob.text();
+		document.getElementById("myInput").value = text;
+		log.innerHTML += "Done!";
+	}
+
+	async function recompile() {
+		const log = document.getElementById('log');
+		const mfst = document.getElementById("myInput").value;
+		if(mfst === "") {
+			log.innerHTML += "Not compiling: Field empty<br>";
+		} else {
+			log.innerHTML += "Compiling..<br>";
+			cheerpOSAddStringFile("/str/fileName.xml", mfst);
+			await cheerpjRunJar("/app/aXML.jar", ['e'], ["/str/fileName.xml"], ["/files/test.xml"]);
+			const blob = await cjFileBlob("/files/test.xml");
+			const dl = document.getElementById("downloadLink");
+			dl.href = window.URL.createObjectURL(blob);
+			dl.click();
+			log.innerHTML += "Done!";
 		}
 	}
-
-
-function transformXML(xmlString) {
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(xmlString, "application/xml");
-    
-    const serializer = new XMLSerializer();
-    const formattedXML = formatXML(serializer.serializeToString(xmlDoc));
-    
-    return formattedXML;
-}
-
-function formatXML(xml) {
-    let formatted = '';
-    const reg = /(>)(<)(\/*)/g;
-    xml = xml.replace(reg, '$1\r\n$2$3');
-    let pad = 0;
-    xml.split('\r\n').forEach((node, index) => {
-        let indent = 0;
-        if (node.match(/.+<\/\w[^>]*>$/)) {
-            indent = 0;
-        } else if (node.match(/^<\/\w/)) {
-            if (pad !== 0) {
-                pad -= 1;
-            }
-        } else if (node.match(/^<\w([^>]*[^\/])?>.*$/)) {
-            indent = 1;
-        } else {
-            indent = 0;
-        }
-
-        const padding = '	'.repeat(pad);
-        formatted += padding + node + '\r\n';
-        pad += indent;
-    });
-
-    return formatted.trim();
-}
-	async function recompile() {
-				document.getElementById('log').innerHTML += "Compiling..<br>";
-		cheerpOSAddStringFile("/str/fileName.xml", document.getElementById("myInput").value);
-		await cheerpjRunJar("/app/aXML.jar", ['e'], ["/str/fileName.xml"], ["/files/test.xml"]);
-		const blob = await cjFileBlob("/files/test.xml");
-		const dl = document.getElementById("downloadLink");
-		dl.href = window.URL.createObjectURL(blob);
-		dl.click();
-	}
-		
-		/*(function () {
-			const logContainer = document.getElementById('log');
-						console.log = function (message) {	  
-								logContainer.innerHTML += message + '<br>';
-			};
-		})();*/
-				//axml2xml got not much logs and the CheerpJ aren't really useful either lol
 </script>
 <script>
 	(async function () {
