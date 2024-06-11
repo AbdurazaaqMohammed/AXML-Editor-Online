@@ -112,7 +112,9 @@
 		var file = files[0];
 		handleFile(file);
 	}
-	
+
+
+
 	async function handleFile(file) {
 				document.getElementById("fileName").textContent = file.name;
 		if (file.type === 'text/xml') {
@@ -168,15 +170,11 @@ function formatXML(xml) {
 
     return formatted.trim();
 }
-
-	let input = Math.random() + '.xml';
-	let output = Math.random() + '.xml';
-	
 	async function recompile() {
-		document.getElementById('log').innerHTML += "Compiling..<br>";
-		cheerpOSAddStringFile(input, document.getElementById("myInput").value);
-		await cheerpjRunJar("/app/aXML.jar", ['e'], [input], [output]);
-		const blob = await cjFileBlob(output);
+				document.getElementById('log').innerHTML += "Compiling..<br>";
+		cheerpOSAddStringFile("/str/fileName.xml", document.getElementById("myInput").value);
+		await cheerpjRunJar("/app/aXML.jar", ['e'], ["/str/fileName.xml"], ["/files/test.xml"]);
+		const blob = await cjFileBlob("/files/test.xml");
 		const dl = document.getElementById("downloadLink");
 		dl.href = window.URL.createObjectURL(blob);
 		dl.click();
