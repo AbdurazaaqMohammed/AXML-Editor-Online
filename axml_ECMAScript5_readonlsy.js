@@ -441,7 +441,7 @@ function parse_to_xml(source){
 								a.value = s[f.value].value;
 								break;
 							case 'bool':
-								a.value = f.value != 0? 'true' : 'false';
+								a.value = f.value === 0? 'false': 'true';
 								break;
 							case 'id_ref':
 								a.value = '@' + f.resource_id.toString(16);
