@@ -1,95 +1,92 @@
 <!doctype html>
 <html lang="en">
 <head>
-	<meta charset="utf-8" />
-	<title>Edit AXML</title>
-	<script src="https://cjrtnc.leaningtech.com/3.0/cj3loader.js"></script>
-	<style>
-		@font-face {
-			font-family: 'MyCustomFont';
-			src: url('https://files.catbox.moe/ap02k1.ttf') format('truetype');
-		}
+    <meta charset="utf-8" />
+    <title>Edit AXML</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cjrtnc.leaningtech.com/3.0/cj3loader.js"></script>
+    <style>
+        @font-face {
+            font-family: 'MyCustomFont';
+            src: url('https://files.catbox.moe/ap02k1.ttf') format('truetype');
+        }
 
-		body {
-			font-family: 'MyCustomFont', 'Poppins', sans-serif;
-			margin: 0;
-			padding: 0;
-			background-color: #000000;
-			color: #d8d4ce;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			height: 100vh;
-		}
+        body {
+            font-family: 'MyCustomFont', 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #000000;
+            color: #d8d4ce;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-		header {
-			background-color: #00aaff;
-			color: #fff;
-			font-size: 12px;
-			padding: 10px 0;
-			text-align: center;
-			height: 7.5%;
-			width: 100%;
-		}
+        header {
+            background-color: #00aaff;
+            color: #fff;
+            font-size: 12px;
+            padding: 10px 0;
+            text-align: center;
+            width: 100%;
+        }
 
-		#drop_zone {
-			border: 2px dashed #ccc;
-			padding: 20px;
-			text-align: center;
-			cursor: pointer;
-			margin-bottom: 20px;
-			margin-top: 50px;
-		}
+        #drop_zone {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            margin: 20px 0;
+            width: 80%;
+            max-width: 300px; /* Limit width for smaller screens */
+        }
 
-		#myInput {
-			font-family: 'MyCustomFont', 'Poppins', sans-serif;
-			padding: 10px;
-			font-size: 18px;
-			border: 2px solid #ccc;
-			border-radius: 8px;
-			box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-			width: 80%; /* Adjusted width */
-			height: 300px; /* Adjusted height */
-			margin-bottom: 20px;
-			resize: none; /* Prevent resizing */
-		}
+        #myInput {
+            font-family: 'MyCustomFont', 'Poppins', sans-serif;
+            padding: 10px;
+            font-size: 18px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 300px; /* Limit width for smaller screens */
+            height: 200px; /* Reduce height for smaller screens */
+            margin: 20px 0;
+            resize: none;
+        }
 
-		.button-container {
-			display: flex;
-			justify-content: flex-end; /* Align buttons to the right */
-			width: 80%; /* Same width as text area */
-		}
-#recompile_button {
-		font-family: 'MyCustomFont', 'Poppins', sans-serif;
-		padding: 10px 20px;
-		font-size: 1em;
-		background-color: #4caf50;
-		color: white;
-		border: none;
-		border-radius: 5px;
-		cursor: pointer;
-		margin-bottom: 10px;
-	}
-		.button-container button {
-			font-family: 'MyCustomFont', 'Poppins', sans-serif;
-			padding: 10px 20px;
-			font-size: 1em;
-			margin-left: 10px; /* Add some space between buttons */
-			cursor: pointer;
-		}
+        .button-container {
+            display: flex;
+            justify-content: center; /* Center buttons on mobile */
+            width: 100%;
+        }
 
-		.button-container button:hover {
-			background-color: #45a049;
-		}
+        .button-container button {
+            font-family: 'MyCustomFont', 'Poppins', sans-serif;
+            padding: 10px 20px;
+            font-size: 1em;
+            margin: 0 5px; /* Adjust margin for smaller screens */
+            cursor: pointer;
+        }
 
-		#downloadLink,
-		#file_input,#removeUseless  {
-			visibility: hidden;
-		}
-		
-		
-		
-	</style>
+        #log {
+            text-align: center;
+            width: 80%;
+            max-width: 300px; /* Limit width for smaller screens */
+            margin: 20px auto; /* Center log on mobile */
+        }
+
+        #downloadLink {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #file_input {
+            display: none; /* Hide file input on mobile */
+        }
+    </style>
 </head>
 
 <body>
