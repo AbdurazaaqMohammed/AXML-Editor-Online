@@ -441,6 +441,7 @@ function parse_to_xml(source){
 								a.value = s[f.value].value;
 								break;
 							case 'bool':
+							console.log(f.value);
 								a.value = f.value === 0? 'false': 'true';
 								break;
 							case 'id_ref':
