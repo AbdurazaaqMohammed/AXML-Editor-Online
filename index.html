@@ -1,92 +1,89 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <title>CheerpJ test</title>
-    <script src="https://cjrtnc.leaningtech.com/3.0/cj3loader.js"></script>
-    <style>
-        @font-face {
-            font-family: 'MyCustomFont';
-            src: url('https://files.catbox.moe/ap02k1.ttf') format('truetype');
-        }
+	<meta charset="utf-8" />
+	<title>CheerpJ test</title>
+	<script src="https://cjrtnc.leaningtech.com/3.0/cj3loader.js"></script>
+	<style>
+		@font-face {
+			font-family: 'MyCustomFont';
+			src: url('https://files.catbox.moe/ap02k1.ttf') format('truetype');
+		}
 
-        body {
-            font-family: 'MyCustomFont', 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #000000;
-            color: #d8d4ce;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100vh;
-        }
+		body {
+			font-family: 'MyCustomFont', 'Poppins', sans-serif;
+			margin: 0;
+			padding: 0;
+			background-color: #000000;
+			color: #d8d4ce;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			height: 100vh;
+		}
 
-        header {
-            background-color: #00aaff;
-            color: #fff;
-            font-size: 12px;
-            padding: 10px 0;
-            text-align: center;
+		header {
+			background-color: #00aaff;
+			color: #fff;
+			font-size: 12px;
+			padding: 10px 0;
+			text-align: center;
 						height: 7.5%;
-            width: 100%;
-        }
+			width: 100%;
+		}
 
-        #drop_zone {
-            border: 2px dashed #ccc;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            margin-bottom: 20px;
-            margin-top: 50px;
-        }
+		#drop_zone {
+			border: 2px dashed #ccc;
+			padding: 20px;
+			text-align: center;
+			cursor: pointer;
+			margin-bottom: 20px;
+			margin-top: 50px;
+		}
 
 
-        #myInput {
-            font-family: 'MyCustomFont', 'Poppins', sans-serif;
-            padding: 10px;
-            font-size: 18px;
-            border: 2px solid #ccc;
-            border-radius: 8px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-            width: 300px;
-            height: 50%px;
-            margin-bottom: 20px;
-        }
+		#myInput {
+			font-family: 'MyCustomFont', 'Poppins', sans-serif;
+			padding: 10px;
+			font-size: 18px;
+			border: 2px solid #ccc;
+			border-radius: 8px;
+			box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+			width: 300px;
+			height: 50%px;
+			margin-bottom: 20px;
+		}
 
-        #decompile_button,
-        #recompile_button {
-            font-family: 'MyCustomFont', 'Poppins', sans-serif;
-            padding: 10px 20px;
-            font-size: 1em;
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-bottom: 10px;
-        }
+		#recompile_button {
+			font-family: 'MyCustomFont', 'Poppins', sans-serif;
+			padding: 10px 20px;
+			font-size: 1em;
+			background-color: #4caf50;
+			color: white;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			margin-bottom: 10px;
+		}
 
-        #decompile_button:hover,
-        #recompile_button:hover {
-            background-color: #45a049;
-        }
+		#recompile_button:hover {
+			background-color: #45a049;
+		}
 
-        #downloadLink, #file_input {
-            visibility: hidden;
-        }
-    </style>
+		#downloadLink, #file_input {
+			visibility: hidden;
+		}
+	</style>
 </head>
 
 <body>
 <header>
-    <h1>Decompile and edit AXML online</h1>
+	<h1>Decompile and edit AXML online</h1>
 </header>
 <div id="drop_zone" onclick="document.querySelector('#file_input').click()" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
-    Click to select or drag and drop XML file.
+	Click to select or drag and drop XML file.
 </div>
 <p id="fileName"> </p>
-<button id="decompile_button" onclick="decompile()">Decompile</button>
 <textarea id="myInput" placeholder="Converted XML will appear here"></textarea>
 <button id="recompile_button" onclick="recompile()">Compile</button>
 
@@ -95,78 +92,108 @@
 <a id="downloadLink" href="#" download>Download File</a>
 <input type="file" id="file_input" accept=".xml" onchange="handleFiles(this.files)">
 
+<script src="axml_ECMAScript5_readonlsy.js"></script>
+<script src="LEORChn.baseLib.js"></script>
+
 <script>
 //or APK, split APKS are supported
-    function dragOverHandler(event) {
-        event.preventDefault();
-        event.dataTransfer.dropEffect = 'copy';
-    }
+	function dragOverHandler(event) {
+		event.preventDefault();
+		event.dataTransfer.dropEffect = 'copy';
+	}
 
-    function dropHandler(event) {
-        event.preventDefault();
-        var file = event.dataTransfer.files[0];
-        handleFile(file);
-    }
+	function dropHandler(event) {
+		event.preventDefault();
+		var file = event.dataTransfer.files[0];
+		handleFile(file);
+	}
 
-    function handleFiles(files) {
-        var file = files[0];
-        handleFile(file);
-    }
-
-    async function handleFile(file) {
+	function handleFiles(files) {
+		var file = files[0];
+		handleFile(file);
+	}
+	
+	async function handleFile(file) {
 				document.getElementById("fileName").textContent = file.name;
-        if (file.type === 'text/xml') {
-						document.getElementById('log').innerHTML += "Reading file..<br>";
-            var reader = new FileReader();
-            reader.onload = function (event) {
-                var arrayBuffer = event.target.result;
-                var uint8Array = new Uint8Array(arrayBuffer);
-                handleUint8Array(uint8Array);
-            };
-            reader.readAsArrayBuffer(file);
-        } /*else if (file.type.startsWith('app') {
+		if (file.type === 'text/xml') {
+			document.getElementById('log').innerHTML += "Reading file..<br>";
+			var reader = new FileReader();
+			reader.onload = function (event) {
+				var arrayBuffer = event.target.result;
+				var uint8Array = new Uint8Array(arrayBuffer);
+				document.getElementById("myInput").value = transformXML(parse_to_xml(uint8Array));
+			};
+			reader.readAsArrayBuffer(file);
+		} /*else if (file.type.startsWith('app') {
 					
 				} */else {
-            alert('Please select a valid XML or APK file.');
+			alert('Please select a valid XML file.');
+		}
+	}
+
+
+function transformXML(xmlString) {
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(xmlString, "application/xml");
+    
+    const serializer = new XMLSerializer();
+    const formattedXML = formatXML(serializer.serializeToString(xmlDoc));
+    
+    return formattedXML;
+}
+
+function formatXML(xml) {
+    let formatted = '';
+    const reg = /(>)(<)(\/*)/g;
+    xml = xml.replace(reg, '$1\r\n$2$3');
+    let pad = 0;
+    xml.split('\r\n').forEach((node, index) => {
+        let indent = 0;
+        if (node.match(/.+<\/\w[^>]*>$/)) {
+            indent = 0;
+        } else if (node.match(/^<\/\w/)) {
+            if (pad !== 0) {
+                pad -= 1;
+            }
+        } else if (node.match(/^<\w([^>]*[^\/])?>.*$/)) {
+            indent = 1;
+        } else {
+            indent = 0;
         }
-    }
 
-    async function handleUint8Array(uint8Array) {
-        var xmlContent = new TextDecoder().decode(uint8Array);
-        cheerpOSAddStringFile("/str/fileName.xml", uint8Array);
-    }
+        const padding = '	'.repeat(pad);
+        formatted += padding + node + '\r\n';
+        pad += indent;
+    });
 
-    async function decompile() {
-				document.getElementById('log').innerHTML += "Decompiling..<br>";
-        await cheerpjRunJar("/app/xml2axml-2.0.1.jar", ['d'], ["/str/fileName.xml"], ["/files/test.xml"]);
-        const blob = await cjFileBlob("/files/test.xml");
-        const text = await blob.text();
-        document.getElementById("myInput").value = text;
-        document.getElementById("recompile_button").style.visibility = "visible";
-    }
+    return formatted.trim();
+}
 
-    async function recompile() {
-				document.getElementById('log').innerHTML += "Compiling..<br>";
-        cheerpOSAddStringFile("/str/fileName.xml", document.getElementById("myInput").value.trim());
-        await cheerpjRunJar("/app/xml2axml-2.0.1.jar", ['e'], ["/str/fileName.xml"], ["/files/test.xml"]);
-        const blob = await cjFileBlob("/files/test.xml");
-        const dl = document.getElementById("downloadLink");
-        dl.href = window.URL.createObjectURL(blob);
-        dl.click();
-    }
+	let input = Math.random() + '.xml';
+	let output = Math.random() + '.xml';
+	
+	async function recompile() {
+		document.getElementById('log').innerHTML += "Compiling..<br>";
+		cheerpOSAddStringFile(input, document.getElementById("myInput").value);
+		await cheerpjRunJar("/app/xml2axml-2.0.1.jar", ['e'], [input], [output]);
+		const blob = await cjFileBlob(output);
+		const dl = document.getElementById("downloadLink");
+		dl.href = window.URL.createObjectURL(blob);
+		dl.click();
+	}
 		
 		/*(function () {
-            const logContainer = document.getElementById('log');
-						console.log = function (message) {      
+			const logContainer = document.getElementById('log');
+						console.log = function (message) {	  
 								logContainer.innerHTML += message + '<br>';
-            };
-        })();*/
+			};
+		})();*/
 				//axml2xml got not much logs and the CheerpJ aren't really useful either lol
 </script>
 <script>
-    (async function () {
-        await cheerpjInit();
-    })();
+	(async function () {
+		await cheerpjInit();
+	})();
 </script>
 </body>
 </html>
