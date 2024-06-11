@@ -83,9 +83,12 @@
 		}
 
 		#downloadLink,
-		#file_input {
+		#file_input,#removeUseless  {
 			visibility: hidden;
 		}
+		
+		
+		
 	</style>
 </head>
 
@@ -100,7 +103,7 @@
 <textarea id="myInput" placeholder="Converted XML will appear here"></textarea>
 <div class="button-container">
 	<button id="recompile_button" onclick="recompile()">Compile</button>
-	<button onclick="recompile()">Test</button>
+	<button id="removeUseless" >Remove useless elements</button>
 </div>
 
 <p id="log"> </p>
@@ -129,9 +132,10 @@
 	async function handleFile(file) {
 		const filename = file.name;
 		document.getElementById("fileName").textContent = file.name;
-		console.log(file.type);
+		const log = document.getElementById('log');
+		log.innerHTML += "Reading file..<br>";
+		log.innerHTML += (file.type + "<br>"); // Apparently octet-stream is blank
 		if (file.type === 'text/xml') {
-			document.getElementById('log').innerHTML += "Reading file..<br>";
 			var reader = new FileReader();
 			reader.onload = function (event) {
 				var arrayBuffer = event.target.result;
@@ -142,18 +146,23 @@
 			};
 			reader.readAsArrayBuffer(file);
 		} else {
+			log.innerHTML += "This is not an XML file..<br>";
+			log.innerHTML += "Trying to find AndroidManifest.xml..<br>";
 			var script = document.createElement('script');
 			script.src = 'https://cdn.bootcdn.net/ajax/libs/jszip/3.3.0/jszip.min.js';
 			
 			script.onload = function() {
 				JSZip.loadAsync(file).then(function(z){
 					if(z.file('AndroidManifest.xml')) {
+						log.innerHTML += "This is a non split APK, reading AndroidManifest.xml..<br>";
 						z.file('AndroidManifest.xml').async('uint8array').then(function(b){
 							cheerpOSAddStringFile("/str/fileName.xml", b);
 							decompile();
 						});
 					} else {
+						log.innerHTML += "This is not a regular APK, checking if it's a split APK..<br>";
 						if (z.file('base.apk')) {
+							log.innerHTML += "Found base.apk, reading AndroidManifest.xml..<br>";
 							z.file('base.apk').async('uint8array').then(function(baseApkContent) {
 								var innerZip = new JSZip();
 								innerZip.loadAsync(baseApkContent).then(function(innerZip) {
@@ -164,6 +173,7 @@
 								});
 							});
 						} else {
+							log.innerHTML += "base.apk not found, checking if it was renamed..<br>";
 							var apkFile = null;
 							z.forEach(function(relativePath, zipEntry) {
 								if (zipEntry.name.endsWith(".apk") && !zipEntry.name.startsWith("config")) {
@@ -171,6 +181,7 @@
 								}
 							});
 							if (apkFile) {
+								log.innerHTML += "Found base.apk, reading AndroidManifest.xml..<br>";
 								apkFile.async('uint8array').then(function(apkContent) {
 									var innerZip = new JSZip();
 									innerZip.loadAsync(apkContent).then(function(innerZip) {
@@ -181,7 +192,7 @@
 									});
 								});
 							} else {
-								alert('No valid APK file found.');
+								alert('No valid file found.');
 							}
 						}
 					}
@@ -202,8 +213,26 @@
 		await cheerpjRunJar("/app/aXML.jar", ['d'], ["/str/fileName.xml"], ["/files/test.xml"]);
 		const blob = await cjFileBlob("/files/test.xml");
 		const text = await blob.text();
-		document.getElementById("myInput").value = text;
-		log.innerHTML += "Done!";
+		const box = document.getElementById("myInput");
+		box.value = text;
+		log.innerHTML += "Done!<br>";
+		log.innerHTML += 'Useless info (requiredSplits, derived.apk.id) was detected in the manifest. These elements can cause an "App not installed error" on some devices, so it is recommended to remove them. There is an option to do this on the side.<br>';
+		const button = document.getElementById("removeUseless");
+		const pattern = /<[^>]*(MissingSplit|com\.android\.dynamic\.apk\.fused\.modules|com\.android\.stamp\.source|com\.android\.stamp\.type|com\.android\.vending\.splits|com\.android\.vending\.derived\.apk\.id|PlayCoreDialog)[^>]*(.*\n.*\n.*\/(?!.*application).*>|.*\n.*\/.*>|>)/g;
+		if(text.includes("com.android.dynamic.apk.fused.modules") || text.includes("com.android.stamp.") || text.includes("com.android.vending.splits") || text.includes("com.android.vending.derived.apk.id") || text.includes("plitTypes") || text.includes("plitRequired")) {
+			button.style.visibility = "visible";
+			button.addEventListener("click", function() {
+			console.log("hey");
+    box.value = box.value.replaceAll(pattern, function(match) {
+        // Replace the matched pattern with an empty string
+        return "";
+    }).replace(/isSplitRequired="true"/g, 'isSplitRequired="false"')
+    .replace(/(splitTypes|requiredSplitTypes)=".*?"/g, "")
+    .trim();
+});
+
+		} else 			button.style.visibility = "hidden";
+
 	}
 
 	async function recompile() {
