@@ -152,8 +152,10 @@ function parse_attribute(array, offset, string_pool) {
 
     result.name_string = get_string_from_pool(string_pool, result.name);
 
-    if (result.type === 0x03000008) { // type string
+    if (result.type === 'string') {
         result.value_string = get_string_from_pool(string_pool, result.value);
+    } else if (result.type === 'bool') {
+        result.value_string = result.value === 0xFFFFFFFF ? 'true' : 'false';
     }
 
     return result;
@@ -441,8 +443,7 @@ function parse_to_xml(source){
 								a.value = s[f.value].value;
 								break;
 							case 'bool':
-							console.log(f.value);
-								a.value = f.value === 0? 'false': 'true';
+								a.value = f.value == 0? 'false': 'true';
 								break;
 							case 'id_ref':
 								a.value = '@' + f.resource_id.toString(16);
