@@ -155,7 +155,7 @@ function parse_attribute(array, offset, string_pool) {
     if (result.type === 'string') {
         result.value_string = get_string_from_pool(string_pool, result.value);
     } else if (result.type === 'bool') {
-        result.value_string = result.value === 0xFFFFFFFF ? 'true' : 'false';
+        result.value_string = result.value === -1 ? 'true' : 'false';
     }
 
     return result;
