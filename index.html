@@ -1,91 +1,94 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <title>Edit AXML</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cjrtnc.leaningtech.com/3.0/cj3loader.js"></script>
-    <style>
-        @font-face {
-            font-family: 'MyCustomFont';
-            src: url('https://files.catbox.moe/ap02k1.ttf') format('truetype');
-        }
+	<meta charset="utf-8" />
+	<title>Edit AXML</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://cjrtnc.leaningtech.com/3.0/cj3loader.js"></script>
+	<style>
+		@font-face {
+			font-family: 'MyCustomFont';
+			src: url('https://files.catbox.moe/ap02k1.ttf') format('truetype');
+		}
 
-        body {
-            font-family: 'MyCustomFont', 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #000000;
-            color: #d8d4ce;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
+		body {
+			font-family: 'MyCustomFont', 'Poppins', sans-serif;
+			margin: 0;
+			padding: 0;
+			background-color: #000000;
+			color: #d8d4ce;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			min-height: 100vh;
+		}
 
-        header {
-            background-color: #00aaff;
-            color: #fff;
-            font-size: 12px;
-            padding: 10px 0;
-            text-align: center;
-            width: 100%;
-        }
+		header {
+			background-color: #00aaff;
+			color: #fff;
+			font-size: 12px;
+			padding: 10px 0;
+			text-align: center;
+			width: 100%;
+		}
 
-        #drop_zone {
-            border: 2px dashed #ccc;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            margin: 20px 0;
-            width: 80%;
-            max-width: 300px; /* Limit width for smaller screens */
-        }
+		#drop_zone {
+			border: 2px dashed #ccc;
+			padding: 20px;
+			text-align: center;
+			cursor: pointer;
+			margin: 20px 0;
+			width: 80%;
+			max-width: 300px; /* Limit width for smaller screens */
+		}
 
-        #myInput {
-            font-family: 'MyCustomFont', 'Poppins', sans-serif;
-            padding: 10px;
-            font-size: 18px;
-            border: 2px solid #ccc;
-            border-radius: 8px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-            width: 80%;
-            height: 200px; /* Reduce height for smaller screens */
-            margin: 20px 0;
-	    resize: both;
-       }
+		#myInput {
+			font-family: 'MyCustomFont', 'Poppins', sans-serif;
+			padding: 10px;
+			font-size: 18px;
+			border: 2px solid #ccc;
+			border-radius: 8px;
+			box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+			width: 80%;
+			height: 200px; /* Reduce height for smaller screens */
+			margin: 20px 0;
+			resize: both;
+		}
 
-        .button-container {
-            display: flex;
-            justify-content: center; /* Center buttons on mobile */
-            width: 100%;
-        }
+		.button-container {
+			display: flex;
+			justify-content: center; /* Center buttons on mobile */
+			width: 100%;
+		}
 
-        .button-container button {
-            font-family: 'MyCustomFont', 'Poppins', sans-serif;
-            padding: 10px 20px;
-            font-size: 1em;
-            margin: 0 5px; /* Adjust margin for smaller screens */
-            cursor: pointer;
-        }
+		.button-container button {
+			font-family: 'MyCustomFont', 'Poppins', sans-serif;
+			padding: 10px 20px;
+			font-size: 1em;
+			margin: 0 5px; /* Adjust margin for smaller screens */
+			cursor: pointer;
+		}
 
-        #log {
-            text-align: center;
-            width: 80%;
-            max-width: 300px; /* Limit width for smaller screens */
-            margin: 20px auto; /* Center log on mobile */
-        }
+		#log {
+			text-align: center;
+			width: 80%;
+			max-width: 300px; /* Limit width for smaller screens */
+			margin: 20px auto; /* Center log on mobile */
+		}
 
-        #downloadLink {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
-        }
+		#downloadLink {
+			display: block;
+			text-align: center;
+			margin-top: 20px;
+		}
 
-        #file_input, #downloadLink, #removeUseless {
-            display: none;
-        }
-    </style>
+		#file_input, #downloadLink {
+			display: none;
+		}
+		#removeUseless {
+			visibility: hidden;
+		}
+	</style>
 </head>
 
 <body>
@@ -146,7 +149,7 @@
 			log.innerHTML += "Trying to find AndroidManifest.xml..<br>";
 			var script = document.createElement('script');
 			script.src = 'https://cdn.bootcdn.net/ajax/libs/jszip/3.3.0/jszip.min.js';
-			
+
 			script.onload = function() {
 				JSZip.loadAsync(file).then(function(z){
 					if(z.file('AndroidManifest.xml')) {
@@ -196,7 +199,7 @@
 			};
 
 			document.body.appendChild(script);
-			
+
 		}
 		/*else {
 			alert('Please select a valid XML file.');
@@ -219,15 +222,15 @@
 			button.style.visibility = "visible";
 			button.addEventListener("click", function() {
 			console.log("hey");
-    box.value = box.value.replaceAll(pattern, function(match) {
-        // Replace the matched pattern with an empty string
-        return "";
-    }).replace(/isSplitRequired="true"/g, 'isSplitRequired="false"')
-    .replace(/(splitTypes|requiredSplitTypes)=".*?"/g, "")
-    .trim();
+	box.value = box.value.replaceAll(pattern, function(match) {
+		// Replace the matched pattern with an empty string
+		return "";
+	}).replace(/isSplitRequired="true"/g, 'isSplitRequired="false"')
+	.replace(/(splitTypes|requiredSplitTypes)=".*?"/g, "")
+	.trim();
 });
 
-		} else 			button.style.visibility = "hidden";
+		} else			button.style.visibility = "hidden";
 
 	}
 
